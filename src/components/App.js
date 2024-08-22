@@ -3,14 +3,13 @@ import { AddContact } from './AddContact';
 import { ContactList } from './ContactList';
 import { Header } from './Header';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
-
+import EditContact from './EditContact';
 function App() {
   const objKey ='contacts'
   const [contacts,setContacts]=useState([]);
-  useEffect(()=> {
-    console.log("total contacts"+JSON.stringify(contacts))
-  },[])
+  // useEffect(()=> {
+  //   console.log("total contacts"+JSON.stringify(contacts))
+  // },[])
   const detailsToParent = (contact) => {
     const updatedContacts = [...contacts, contact];
     setContacts(updatedContacts); 
@@ -23,6 +22,7 @@ function App() {
   const deleteContactHandler = (id) => {
     const remainingContacts = contacts.filter((contact) => contact.id !== id); 
     setContacts(remainingContacts);
+    localStorage.setItem(objKey,JSON.stringify(remainingContacts));
   };
   return ( 
   <div>
@@ -36,6 +36,7 @@ function App() {
           getContactId={deleteContactHandler}
           />}/>
         <Route path='/add' Component={() => <AddContact detailsToParent={detailsToParent}/>}/>
+        <Route path='/edit/:id/:name/:email' Component={() => <EditContact />}></Route>
       </Routes>
      </BrowserRouter>
   </div>)
