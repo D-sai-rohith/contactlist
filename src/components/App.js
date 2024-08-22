@@ -7,9 +7,6 @@ import EditContact from './EditContact';
 function App() {
   const objKey ='contacts'
   const [contacts,setContacts]=useState([]);
-  // useEffect(()=> {
-  //   console.log("total contacts"+JSON.stringify(contacts))
-  // },[])
   const detailsToParent = (contact) => {
     const updatedContacts = [...contacts, contact];
     setContacts(updatedContacts); 
@@ -19,11 +16,11 @@ function App() {
     const localArray = JSON.parse(localStorage.getItem(objKey));
     if (localArray) setContacts(localArray);
   }, []);
-  const deleteContactHandler = (id) => {
-    const remainingContacts = contacts.filter((contact) => contact.id !== id); 
-    setContacts(remainingContacts);
-    localStorage.setItem(objKey,JSON.stringify(remainingContacts));
-  };
+  // const deleteContactHandler = (id) => {
+  //   const remainingContacts = contacts.filter((contact) => contact.id !== id); 
+  //   setContacts(remainingContacts);
+  //   localStorage.setItem(objKey,JSON.stringify(remainingContacts));
+  // };
   return ( 
   <div>
     <div id='none'></div>
@@ -33,10 +30,15 @@ function App() {
         <Route path='/' exact Component={() => 
         <ContactList 
           contacts={contacts} 
-          getContactId={deleteContactHandler}
+          // getContactId={deleteContactHandler}
+
           />}/>
         <Route path='/add' Component={() => <AddContact detailsToParent={detailsToParent}/>}/>
-        <Route path='/edit/:id/:name/:email' Component={() => <EditContact />}></Route>
+        <Route path='/edit/:id/:name/:email' 
+        Component={() => <EditContact 
+                              contacts={contacts} 
+                              />}>                    
+        </Route>
       </Routes>
      </BrowserRouter>
   </div>)
