@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link} from 'react-router-dom';
 import { Delete, Edit, Search } from '@mui/icons-material';
 import { Avatar } from '@mui/material';
-import { Alert, Button, Modal } from 'react-bootstrap';
+import { Alert, Button, Modal, ModalBody, ModalFooter } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 export const ContactList = (props) => {
@@ -49,19 +49,22 @@ export const ContactList = (props) => {
      setShowModal(false)
      toast.success("Contact updated successfully",{
       position: "top-right",
-autoClose: 2000,
-hideProgressBar: false,
-closeOnClick: true,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "light",
-// transition: Bounce,
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
       });
       
  }
  const viewContact =(contact)=>{
+    
+    setName({...name,name:contact.name,email:contact.email,src:""})
     setViewModal(true)
+    console.log(name)
+
  }
   const handleDelete = (contact) => 
   {
@@ -120,8 +123,27 @@ theme: "light",
             </Button>
         </Modal.Footer>
         </Modal>
-        <Modal show={viewModal} onHide={()=>setViewModal(false)}>
-
+        <Modal show={viewModal} className='p-3' onHide={()=>setViewModal(false)}>
+        <Modal.Header closeButton>
+               <Modal.Title>View Contact</Modal.Title>
+           </Modal.Header>
+           <ModalBody>
+            <div className='d-flex justify-content-center align-items-center'>
+              <Avatar src={name.src} className='w-50 h-100'/>
+            </div>
+            <div className='d-flex justify-content-center align-items-center mt-3'>
+              
+            <input type='file'  />
+            </div>
+            
+            <h5 className='mt-3'>Name : </h5><p>{name.name}</p>
+            <h5 className='mt-3'>Phone : </h5><p>{name.email}</p>
+           </ModalBody>
+           <ModalFooter>
+           <Button variant="primary" onClick={()=>{setViewModal(false)}}>
+               Close
+            </Button>
+           </ModalFooter>
         </Modal>
       <ToastContainer/>
       <div className='d-flex justify-content-between mt-3 pe-2'>
@@ -145,7 +167,7 @@ theme: "light",
     >
       
       <div className='d-flex'>
-        <Avatar alt={contact.name} onClick ={(contact)=>{viewContact(contact)}} src='https://th.bing.com/th/id/OIP.9f07OqZ6qwXdI-25OXJUqQAAAA?rs=1&pid=ImgDetMain' className='me-4' style={{ color: 'blue' }} />
+        <Avatar alt={contact.name} onClick ={()=>{viewContact(contact)}} src='https://th.bing.com/th/id/OIP.9f07OqZ6qwXdI-25OXJUqQAAAA?rs=1&pid=ImgDetMain' className='me-4' style={{ color: 'blue' }} />
         <div>
           <div>
             <b>{contact.name}</b>
