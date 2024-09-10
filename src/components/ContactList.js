@@ -56,18 +56,25 @@ export const ContactList = (props) => {
     props.editedContacts(updatedContacts)
      localStorage.setItem(objKey,JSON.stringify(updatedContacts));
      setShowModal(false)
-     
+     toast.success("Contact updated successfully",{
+      position: "top-right",
+autoClose: 2000,
+hideProgressBar: false,
+closeOnClick: true,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "light",
+// transition: Bounce,
+      });
       
  }
-  const handleDelete =  (contact) => 
+ const viewContact =(contact)=>{
+    setViewModal(true)
+ }
+  const handleDelete = (contact) => 
   {
-
-    // const updatedContacts = contacts.filter(c => c.id !== contact.id);
-    // setContacts(updatedContacts);
-    // localStorage.setItem(objKey, JSON.stringify(updatedContacts));
-     props.getContactId(contact.id)
-    console.log(contact)
-     toast.success("Contact Deleted",{
+    toast.success("Contact Deleted",{
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
