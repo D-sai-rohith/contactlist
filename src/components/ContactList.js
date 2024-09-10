@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link} from 'react-router-dom';
-import { Delete, Edit, Search } from '@mui/icons-material';
+import { Delete, Edit, PersonAddAlt1, Search } from '@mui/icons-material';
 import { Avatar } from '@mui/material';
-import { Alert, Button, Modal, ModalBody, ModalFooter } from 'react-bootstrap';
-import { toast, ToastContainer } from 'react-toastify';
+import {  Button, Modal } from 'react-bootstrap';
 import 'react-toastify/dist/ReactToastify.css';
+import { deepOrange, deepPurple } from '@mui/material/colors';
+import { toast, ToastContainer } from 'react-toastify';
 export const ContactList = (props) => {
   const [showModal, setShowModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('');
   const [contacts, setContacts] = useState(props.contacts); 
   const [editingId,setEditingId] = useState(null)
-  const [viewModal,setViewModal] = useState(false)
   const loweredSearchTerm = searchTerm.toLowerCase();
   const handleClose = () => setShowModal(false);
   const objKey='contacts';
@@ -21,10 +21,18 @@ export const ContactList = (props) => {
     name:'',
     email:''
   })
- 
- const saveChanges = (e) =>
+ const saveChanges =  (e) =>
  {
-   
+  toast.success("Contact updated successfully",{
+    position: "top-right",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    });
    e.preventDefault();
      if (name.name === '' || name.email === '') 
        {
@@ -44,31 +52,22 @@ export const ContactList = (props) => {
        return contact;
      });
      setContacts(updatedContacts)
-     
+    
+    props.editedContacts(updatedContacts)
      localStorage.setItem(objKey,JSON.stringify(updatedContacts));
      setShowModal(false)
-     toast.success("Contact updated successfully",{
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      });
+     
       
  }
- const viewContact =(contact)=>{
-    
-    setName({...name,name:contact.name,email:contact.email,src:""})
-    setViewModal(true)
-    console.log(name)
-
- }
-  const handleDelete = (contact) => 
+  const handleDelete =  (contact) => 
   {
-    toast.success("Contact Deleted",{
+
+    // const updatedContacts = contacts.filter(c => c.id !== contact.id);
+    // setContacts(updatedContacts);
+    // localStorage.setItem(objKey, JSON.stringify(updatedContacts));
+     props.getContactId(contact.id)
+    console.log(contact)
+     toast.success("Contact Deleted",{
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -78,20 +77,38 @@ export const ContactList = (props) => {
       progress: undefined,
       theme: "light",
     })
-    const updatedContacts = contacts.filter(c => c.id !== contact.id);
-    setContacts(updatedContacts);
-    localStorage.setItem(objKey, JSON.stringify(updatedContacts));
    
   }
+//  const handleDelete = async (contact) => {
+  //   try {
+  //     // If getContactId is async, await its completion
+  //     await props.getContactId(contact.id);
+  
+  //     // Then show the toast
+  //     toast.success("Contact Deleted", {
+  //       position: "top-right",
+  //       autoClose: 2000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "light",
+  //     });
+  //   } catch (error) {
+  //     console.error("Error deleting contact:", error);
+  //     // Optionally handle errors
+  //   }
+  // };
+  
   const handleShow = (contact) => {
     setName({...name,name:contact.name,email:contact.email})
     setEditingId(contact.id)
     setShowModal(true);
   }
-
   return (
     <div>
-
+          <ToastContainer/>
         <Modal show={showModal} onHide={handleClose}>
            <Modal.Header closeButton>
                <Modal.Title>Edit Contact</Modal.Title>
@@ -123,29 +140,6 @@ export const ContactList = (props) => {
             </Button>
         </Modal.Footer>
         </Modal>
-        <Modal show={viewModal} className='p-3' onHide={()=>setViewModal(false)}>
-        <Modal.Header closeButton>
-               <Modal.Title>View Contact</Modal.Title>
-           </Modal.Header>
-           <ModalBody>
-            <div className='d-flex justify-content-center align-items-center'>
-              <Avatar src={name.src} className='w-50 h-100'/>
-            </div>
-            <div className='d-flex justify-content-center align-items-center mt-3'>
-              
-            <input type='file'  />
-            </div>
-            
-            <h5 className='mt-3'>Name : </h5><p>{name.name}</p>
-            <h5 className='mt-3'>Phone : </h5><p>{name.email}</p>
-           </ModalBody>
-           <ModalFooter>
-           <Button variant="primary" onClick={()=>{setViewModal(false)}}>
-               Close
-            </Button>
-           </ModalFooter>
-        </Modal>
-      <ToastContainer/>
       <div className='d-flex justify-content-between mt-3 pe-2'>
         <h5 className='ms-4 mt-4'>Contacts</h5>
         <div className='w-50'>
@@ -156,9 +150,13 @@ export const ContactList = (props) => {
           />
           <Search className='b-4' />
         </div>
+        <div>
+          
+        <PersonAddAlt1 className='me-3' color='info'/>
         <Link to='/add'>
-          <button className='btn btn-primary'>Add Contact</button>
+          <button className='btn btn-info rounded-pill text-white'>Add Contact</button>
         </Link>
+        </div>
       </div>
       {filteredContacts.map((contact) => (
     <div
@@ -166,8 +164,8 @@ export const ContactList = (props) => {
       key={contact.id}
     >
       
-      <div className='d-flex'>
-        <Avatar alt={contact.name} onClick ={()=>{viewContact(contact)}} src='https://th.bing.com/th/id/OIP.9f07OqZ6qwXdI-25OXJUqQAAAA?rs=1&pid=ImgDetMain' className='me-4' style={{ color: 'blue' }} />
+      <div className='d-flex align-items-center'>
+        <Avatar alt={contact.name} className='me-4' sx={{ bgcolor: '#25cff2;' }} >{contact.name[0].toUpperCase()}</Avatar>
         <div>
           <div>
             <b>{contact.name}</b>
@@ -176,14 +174,17 @@ export const ContactList = (props) => {
         </div>
       </div>
       <div>
+        
         <Delete
         onClick={() => handleDelete(contact)}
        
-        style={{ color: 'red' }} 
+        color='warning' 
         />
         <Edit
-          style={{ color: 'blue' }}
-         onClick={()=>handleShow(contact)}
+          color='info'
+         onClick={()=>handleShow(contact)
+          
+         }
 
           className='ms-3'
         /> 

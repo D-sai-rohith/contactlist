@@ -16,8 +16,8 @@ export const AddContact = (props) => {
       alert('Enter phone number properly');
       return;
     }
-    const src=''
-    const newContact = { id, name, email,src };
+
+    const newContact = { id, name, email };
     props.detailsToParent(newContact);
     navigate('/');
   }

@@ -16,7 +16,17 @@ function App() {
     const localArray = JSON.parse(localStorage.getItem(objKey));
     if (localArray) setContacts(localArray);
   }, []);
-
+   const deleteContactHandler = (id) => {
+    const remainingContacts = contacts.filter((contact) => contact.id !== id); 
+    setContacts(remainingContacts);
+    localStorage.setItem(objKey,JSON.stringify(remainingContacts));
+  };
+  const saveEdited = (c) =>
+  {
+    setContacts(c);
+    // console.log(c)
+    localStorage.setItem(objKey,JSON.stringify(contacts))
+  }
   return ( 
   <div>
     <div id='none'></div>
@@ -26,8 +36,8 @@ function App() {
         <Route path='/' exact Component={() => 
         <ContactList 
           contacts={contacts} 
-
-
+          getContactId={deleteContactHandler}
+          editedContacts = {saveEdited}
           />}/>
         <Route path='/add' Component={() => <AddContact detailsToParent={detailsToParent}/>}/>
         <Route path='/edit/:id/:name/:email' 
